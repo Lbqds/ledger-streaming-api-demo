@@ -1,63 +1,20 @@
-# Ledger Alephium App
+# Streaming Api Demo
 
-## Build from source
+This demo is used to demonstrate the issue of `Speculos` crashing when using the streaming api from the ledger rust sdk.
 
-To build the artifacts for Ledger devices, run the following command:
+This demo will call `NbglStreamingReview::start` when receiving the first data frame, call `NbglStreamingReview::continue_review` upon receiving subsequent data frames, and call `NbglStreamingReview::finish` when receiving the last data frame. You can refer to the code in the `src/handler.rs` file.
 
-```shell
-make release
-```
+You can run the following commands to reproduce the issue:
 
-## Test
+1. `make release`
+2. `make run-speculos`
+3. `cd js && npm install && npm run test`
 
-### Test with Speculos
-
-Start the Speculos simulator:
-
-```shell
-make run-speculos-<device>
-```
-
-Run the tests:
-
-```shell
-cd js/docker && docker compose up -d && cd ..
-npm install && MODEL=<device> npm run speculos-test
-```
-
-### Test with a Ledger Device
-
-Connect your Ledger device and run the tests:
-
-```shell
-cd js && npm run device-test
-```
-
-### Test a Single Test Case
-
-To test a specific test case, change `it` to `it.only` in the test file `wallet.test.ts`. This allows Jest to run only that test case.
-
-## Install
-
-To install the Alephium app on your Ledger device, you will need the ledgerctl tool. Follow the official installation guide here: [https://github.com/LedgerHQ/ledgerctl#quick-install](https://github.com/LedgerHQ/ledgerctl#quick-install).
-
-To install the app for Nano S:
+The crash occurs when calling `NbglStreamingReview::finish`. If you run `Speculos` with the `--trace` parameter, you can see the log output as follows:
 
 ```
-make install_nanos
-```
-
-To install the app for Nano S+:
-
-```
-make install_nanosplus
-```
-
-Note: Manual installation for Nano X is not supported as the device no longer supports application side-loading.
-
-## Uninstall
-
-To uninstall the Alephium app from your Ledger device:
-```
-ledgerctl delete Alephium
+[*] syscall: nbgl_screen_reinit() = 0 (0x0)
+[*] syscall: nbgl_front_draw_rect0x5000ac90 = 0 (0x0)
+[*] syscall: nbgl_front_draw_img_file0x50002cce, 0x5000, 0, 0x5000224a
+[-] The app crashed with signal 11
 ```
