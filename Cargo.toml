@@ -1,0 +1,33 @@
+[package]
+name = "demo"
+version = "0.1.0"
+authors = ["lbqds"]
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+ledger_device_sdk = "=1.15.0"
+ledger_secure_sdk_sys = "=1.4.4"
+numtoa = "=0.2.4"
+include_gif = "1.2.0"
+
+[features]
+default = ["device"]
+debug = ["ledger_device_sdk/speculos", "ledger_device_sdk/speculos"]
+device = []
+
+[profile.release]
+opt-level = 'z'
+lto = true
+
+[package.metadata.ledger]
+name = "Alephium"
+curve = ["secp256k1"]
+flags = "0"
+path = ["44'/1234'"]
+
+[package.metadata.ledger.stax]
+icon = "alph_32x32.gif"
+
+[package.metadata.ledger.flex]
+icon = "alph_40x40.gif"
